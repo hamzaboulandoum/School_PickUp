@@ -1,6 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:e_shcool_bus/GoogleMapsCode/maps_test.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'dart:ui';
 
@@ -75,7 +75,7 @@ class _HomePageState extends State<HomePage> {
         ),
         backgroundColor: const Color(0x665ac18e),
         title: const Text(
-          'Notification Manager',
+          'MapsPluginPage',
           style: TextStyle(
             color: Colors.white,
             fontWeight: FontWeight.bold,
@@ -103,14 +103,16 @@ class _HomePageState extends State<HomePage> {
                     ],
                   ),
                 ),
-                child: Column(
+                child: MapSample(),
+                //We Add The LogoutButtonLater
+                /* child: Column(
                   // voila so we have built the column at the end
                   mainAxisAlignment: MainAxisAlignment.end,
                   crossAxisAlignment: CrossAxisAlignment.end,
                   children: [
-                    //buildLogOutBtn(),
+                    buildLogOutBtn(),
                   ],
-                ),
+                ), */
               ),
             ],
           ),
@@ -119,6 +121,12 @@ class _HomePageState extends State<HomePage> {
     );
   }
 }
+
+
+
+
+
+
 
 /* class MyCustomForm extends StatefulWidget {
   const MyCustomForm({Key? key}) : super(key: key);
@@ -203,32 +211,29 @@ class _MyCustomFormState extends State<MyCustomForm> {
 }
  */
 // I am actually very proud of you , you are becoming very fast flutter dev
-
-
 // This is how we get user data from firebase
-
-            /*Container(
-              height: 250,
-              padding: const EdgeInsets.symmetric(vertical: 20),
-              child: StreamBuilder<QuerySnapshot>( // This is how you do read the firebase Data
-                stream: users,
-                builder: (BuildContext context,
-                    AsyncSnapshot<QuerySnapshot> snapshot) {
-                  if (snapshot.hasError) {
-                    return const Text('Something Went Wrong');
-                  }
-                  if (snapshot.connectionState == ConnectionState.waiting) {
-                    return const Text("Loading");
-                  }
-                  final data = snapshot.requireData;
-                  return ListView.builder(
-                    itemCount: data.size,
-                    itemBuilder: (context, index) {
-                      return Text(
-                        'My name is ${data.docs[index]['name']} and I am ${data.docs[index]['Age']}',
-                      );
-                    },
-                  );
-                },
-              ),
-            ),*/
+/*Container(
+  height: 250,
+  padding: const EdgeInsets.symmetric(vertical: 20),
+  child: StreamBuilder<QuerySnapshot>( // This is how you do read the firebase Data
+    stream: users,
+    builder: (BuildContext context,
+        AsyncSnapshot<QuerySnapshot> snapshot) {
+      if (snapshot.hasError) {
+        return const Text('Something Went Wrong');
+      }
+      if (snapshot.connectionState == ConnectionState.waiting) {
+        return const Text("Loading");
+      }
+      final data = snapshot.requireData;
+      return ListView.builder(
+        itemCount: data.size,
+        itemBuilder: (context, index) {
+          return Text(
+            'My name is ${data.docs[index]['name']} and I am ${data.docs[index]['Age']}',
+          );
+        },
+      );
+    },
+  ),
+),*/

@@ -108,6 +108,7 @@ class _SignUpPageState extends State<SignUpPage> {
               }
               return null;
             },
+            controller: _firstName,
             keyboardType: TextInputType.name,
             style: const TextStyle(color: Colors.black87),
             decoration: const InputDecoration(

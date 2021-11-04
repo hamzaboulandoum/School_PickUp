@@ -33,6 +33,8 @@ dependencies:
   cloud_firestore: ^2.5.3
   #firebase_core dependency
   firebase_core: ^1.7.0
+  #google_maps_flutter dependency
+  google_maps_flutter: ^2.1.0
 
 
 
