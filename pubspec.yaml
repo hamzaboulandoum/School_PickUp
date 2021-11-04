@@ -35,6 +35,10 @@ dependencies:
   firebase_core: ^1.7.0
   #google_maps_flutter dependency
   google_maps_flutter: ^2.1.0
+  #geolocator dependency
+  geolocator: ^7.7.1
+  #geocoding dependency
+  geocoding: ^2.0.1
 
 
 

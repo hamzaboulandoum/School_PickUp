@@ -1,5 +1,4 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:e_shcool_bus/GoogleMapsCode/maps_test.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'dart:ui';
@@ -103,8 +102,23 @@ class _HomePageState extends State<HomePage> {
                     ],
                   ),
                 ),
-                child: MapSample(),
-                //We Add The LogoutButtonLater
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.end,
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  children: [
+                    buildLogOutBtn(),
+                  ],
+                ),
+                /* child: Container(
+                  alignment: Alignment.center,
+                  padding:
+                      const EdgeInsets.symmetric(vertical: 50, horizontal: 10),
+                  color: Colors.black,
+
+                  child: MapSample(),
+                ), */
+
+                //We Add The LogoutButton
                 /* child: Column(
                   // voila so we have built the column at the end
                   mainAxisAlignment: MainAxisAlignment.end,
@@ -121,12 +135,6 @@ class _HomePageState extends State<HomePage> {
     );
   }
 }
-
-
-
-
-
-
 
 /* class MyCustomForm extends StatefulWidget {
   const MyCustomForm({Key? key}) : super(key: key);

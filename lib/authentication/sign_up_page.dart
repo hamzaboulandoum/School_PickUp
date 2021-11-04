@@ -1,14 +1,15 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:geolocator/geolocator.dart';
+import 'package:geocoding/geocoding.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'dart:ui';
 import 'package:flutter/foundation.dart';
+import 'package:flutter/services.dart';
+import 'dart:ui';
 
 // This is actually the Sign Up page i have made a whole page
 // for it and we will animate between the both pages to see
 // how does that work on flutter maan
-
-import 'package:flutter/services.dart';
 
 class SignUpPage extends StatefulWidget {
   // So here we have actually created this funtion
@@ -42,14 +43,15 @@ class _SignUpPageState extends State<SignUpPage> {
   String emailAdress = "";
   String password = "";
   String confirmPassword = "";
-  GeoPoint location = const GeoPoint(87.0, 78.5);
-
-  // the logout Future
+  GeoPoint location = const GeoPoint(0, 0);
+  String address = "";
+  bool havegotlocation = false;
 
   //Create User Future
   Future<void> createUser() async {
-    //now we will catch the errors
     try {
+      CollectionReference userData =
+          FirebaseFirestore.instance.collection('userData');
       UserCredential userCredential = await FirebaseAuth.instance
           .createUserWithEmailAndPassword(
               email: _controllerEmail.text, password: _controllerPassword.text);
@@ -58,6 +60,18 @@ class _SignUpPageState extends State<SignUpPage> {
       // now we can sign up directly broski
       widget.onSignUp(userCredential.user);
       widget.loginchanged(true);
+      //here we add our user data to the database
+      userData
+          .add({
+            'firstName': firstName,
+            'lastName': lastName,
+            'email': emailAdress,
+            'password': password,
+            'Location': location,
+            'adress': address,
+          })
+          .then((value) => print("Content Added to database"))
+          .catchError((error) => print('Failed to Add UserData $error'));
     } on FirebaseAuthException catch (e) {
       setState(() {
         error = e.message!; // voila this is because of the null safety
@@ -65,14 +79,36 @@ class _SignUpPageState extends State<SignUpPage> {
     }
   }
 
-  // Let us define some Widget That we would Use
+  //getiing location and adress functions
+  getCurrentLocation() async {
+    Position position = await Geolocator.getCurrentPosition(
+        desiredAccuracy: LocationAccuracy.best);
+    //we got our location here
+    location = GeoPoint(position.latitude, position.longitude);
+    getAddresse(position.latitude, position.longitude);
+  }
 
+  getAddresse(var a, var b) async {
+    List<Placemark> place = await placemarkFromCoordinates(a, b);
+    Placemark placeMark = place[0];
+    String? name = placeMark.name;
+    String? subLocality = placeMark.subLocality;
+    String? locality = placeMark.locality;
+    String? administrativeArea = placeMark.administrativeArea;
+    String? postalCode = placeMark.postalCode;
+    String? country = placeMark.country;
+    //We got out adress variable here
+    address =
+        "$name, $subLocality, $locality, $administrativeArea $postalCode, $country";
+  }
+
+  // Let us define some Widget That we would Use
   Widget buildFirstName() {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: <Widget>[
         const Text(
-          'First Name',
+          'Prenom', //firstname
           style: TextStyle(
             color: Colors.white,
             fontSize: 16,
@@ -102,12 +138,6 @@ class _SignUpPageState extends State<SignUpPage> {
             onChanged: (value) {
               firstName = value; // cast in dart
             },
-            validator: (value) {
-              if (value == null || value.isEmpty) {
-                return error = 'Please enter your first name Text';
-              }
-              return null;
-            },
             controller: _firstName,
             keyboardType: TextInputType.name,
             style: const TextStyle(color: Colors.black87),
@@ -118,7 +148,7 @@ class _SignUpPageState extends State<SignUpPage> {
                 Icons.person,
                 color: Color(0xff5ac18e),
               ),
-              hintText: 'First Name',
+              hintText: 'Prenom',
               hintStyle: TextStyle(
                 color: Colors.black38,
               ),
@@ -134,7 +164,7 @@ class _SignUpPageState extends State<SignUpPage> {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: <Widget>[
         const Text(
-          'Last Name',
+          'Nom',
           style: TextStyle(
             color: Colors.white,
             fontSize: 16,
@@ -164,12 +194,7 @@ class _SignUpPageState extends State<SignUpPage> {
             onChanged: (value) {
               lastName = value; // cast in dart
             },
-            validator: (value) {
-              if (value == null || value.isEmpty) {
-                return error = 'Please enter your last name Text';
-              }
-              return null;
-            },
+
             // we have Set Up the Text Controller Correctly
             controller: _lastName,
             keyboardType: TextInputType.name,
@@ -181,7 +206,7 @@ class _SignUpPageState extends State<SignUpPage> {
                   Icons.person,
                   color: Color(0xff5ac18e),
                 ),
-                hintText: 'Last Name',
+                hintText: 'Nom',
                 hintStyle: TextStyle(
                   color: Colors.black38,
                 )),
@@ -226,12 +251,6 @@ class _SignUpPageState extends State<SignUpPage> {
             onChanged: (value) {
               emailAdress = value; // cast in dart
             },
-            validator: (value) {
-              if (value == null || value.isEmpty) {
-                return error = 'Please enter your email Adress';
-              }
-              return null;
-            },
             controller: _controllerEmail,
             keyboardType: TextInputType.emailAddress,
             style: const TextStyle(color: Colors.black87),
@@ -257,7 +276,7 @@ class _SignUpPageState extends State<SignUpPage> {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: <Widget>[
         const Text(
-          'Password',
+          'Mot de passe',
           style: TextStyle(
             color: Colors.white,
             fontSize: 16,
@@ -287,12 +306,6 @@ class _SignUpPageState extends State<SignUpPage> {
             onChanged: (value) {
               password = value; // cast in dart
             },
-            validator: (value) {
-              if (value == null || value.isEmpty) {
-                return error = 'Please enter your password';
-              }
-              return null;
-            },
             controller: _controllerPassword,
             obscureText: true,
             style: const TextStyle(
@@ -305,7 +318,7 @@ class _SignUpPageState extends State<SignUpPage> {
                   Icons.lock,
                   color: Color(0xff5ac18e),
                 ),
-                hintText: 'Password',
+                hintText: 'Mot de passe',
                 hintStyle: TextStyle(
                   color: Colors.black38,
                 )),
@@ -320,7 +333,7 @@ class _SignUpPageState extends State<SignUpPage> {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: <Widget>[
         const Text(
-          'Confirm Password',
+          'Confirmer mot de passe',
           style: TextStyle(
             color: Colors.white,
             fontSize: 16,
@@ -349,57 +362,95 @@ class _SignUpPageState extends State<SignUpPage> {
             onChanged: (value) {
               confirmPassword = value; // cast in dart
             },
-            validator: (value) {
-              if (confirmPassword != password) {
-                return error = 'your confirm password is wrong';
-              } else if (value == null || value.isEmpty) {
-                return error = 'Please enter your first name Text';
-              }
-              return null;
-            },
             controller: _controllerConfirmPassword,
             obscureText: true,
-            style: const TextStyle(
-              color: Colors.black87,
-            ),
+            style: const TextStyle(color: Colors.black87),
             decoration: const InputDecoration(
-                border: InputBorder.none,
-                contentPadding: EdgeInsets.only(top: 14),
-                prefixIcon: Icon(
-                  Icons.lock,
-                  color: Color(0xff5ac18e),
-                ),
-                hintText: 'Confirm Password',
-                hintStyle: TextStyle(
-                  color: Colors.black38,
-                )),
+              border: InputBorder.none,
+              contentPadding: EdgeInsets.only(top: 14),
+              prefixIcon: Icon(Icons.lock, color: Color(0xff5ac18e)),
+              hintText: 'Confirmer mot de passe',
+              hintStyle: TextStyle(color: Colors.black38),
+            ),
           ),
         )
       ],
     );
   }
 
+  Widget getLocationButton() {
+    return Container(
+      padding: const EdgeInsets.only(top: 10),
+      width: double.infinity,
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.start,
+        children: [
+          const Text(
+            'Clicker pour prendre votre position',
+            style: TextStyle(
+              color: Colors.white,
+              fontSize: 17,
+              fontWeight: FontWeight.bold,
+            ),
+          ),
+          const SizedBox(width: 5),
+          ElevatedButton(
+            onPressed: () {
+              havegotlocation = true;
+              getCurrentLocation();
+            },
+            child: const Icon(
+              Icons.location_on_outlined,
+              color: Color(0xff5ac18e),
+            ),
+            style: ElevatedButton.styleFrom(
+              shape: const CircleBorder(),
+              padding: const EdgeInsets.all(10),
+              primary: Colors.white, // <-- Button color
+              onPrimary: Colors.green, // <-- Splash color
+            ),
+          )
+        ],
+      ),
+    );
+  }
+
   Widget buildSignUpBtn() {
-    CollectionReference userData =
-        FirebaseFirestore.instance.collection('userData');
     return Container(
       padding: const EdgeInsets.symmetric(vertical: 25),
       width: double.infinity,
       child: ElevatedButton(
         onPressed: () {
+          //D'abord il fallait verifier les conditions
+          if (firstName == "") {
+            setState(() {
+              error = "vous n'avez pas saisie votre Prenom!";
+            });
+          } else if (lastName == "") {
+            setState(() {
+              error = "vous n'avez pas saisie votre Nom!";
+            });
+          } else if (emailAdress == "") {
+            setState(() {
+              error = "vous n'avez pas saisie votre Email!";
+            });
+          } else if (password == "") {
+            setState(() {
+              error = "vous n'avez pas saisie votre mot de passe!";
+            });
+          } else if (password != confirmPassword) {
+            setState(() {
+              error = "mot de passe différent!";
+            });
+          } else if (!havegotlocation) {
+            setState(() {
+              error = "Click The get position button";
+            });
+          }
           // we first send the data into the server
-          userData
-              .add({
-                'firstName': firstName,
-                'lastName': lastName,
-                'email': emailAdress,
-                'password': password,
-                'Location': location
-              })
-              .then((value) => print("Content Added to database"))
-              .catchError((error) => print('Failed to Add UserData $error'));
-
-          createUser();
+          else {
+            createUser();
+          }
         },
         style: ButtonStyle(
           shape: MaterialStateProperty.all<RoundedRectangleBorder>(
@@ -418,7 +469,7 @@ class _SignUpPageState extends State<SignUpPage> {
         ),
 
         child: const Text(
-          'SIGN UP',
+          'Créer un compte',
           style: TextStyle(
             color: Color(0xff5ac18e),
             fontSize: 18,
@@ -466,7 +517,7 @@ class _SignUpPageState extends State<SignUpPage> {
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: <Widget>[
                         const Text(
-                          'Sign Up',
+                          'Créer un Compte',
                           style: TextStyle(
                             color: Colors.white,
                             fontSize: 40,
@@ -483,24 +534,16 @@ class _SignUpPageState extends State<SignUpPage> {
                         buildPassword(),
                         const SizedBox(height: 10),
                         buildConfirmPassword(),
-                        Text(
-                          error,
-                          style: const TextStyle(
-                            fontSize: 20,
-                            color: Colors.red,
-                            fontWeight: FontWeight.bold,
-                          ),
-                        ),
+                        getLocationButton(),
                         buildSignUpBtn(),
                         Text(
                           error,
                           style: const TextStyle(
+                            color: Colors.white,
                             fontSize: 20,
-                            color: Colors.red,
                             fontWeight: FontWeight.bold,
                           ),
                         ),
-                        // we will add a snackBar here to show the error afterwards
                       ],
                     ),
                   ),
