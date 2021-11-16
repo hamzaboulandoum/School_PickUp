@@ -106,7 +106,7 @@ class _LoginPageState extends State<LoginPage> {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: <Widget>[
         const Text(
-          'Password',
+          'Mot de Passe',
           style: TextStyle(
             color: Colors.white,
             fontSize: 16,
@@ -145,7 +145,7 @@ class _LoginPageState extends State<LoginPage> {
                   Icons.lock,
                   color: Color(0xff5ac18e),
                 ),
-                hintText: 'Password',
+                hintText: 'Mot de passe',
                 hintStyle: TextStyle(
                   color: Colors.black38,
                 )),
@@ -163,7 +163,7 @@ class _LoginPageState extends State<LoginPage> {
           //you need to implement this later broski
         },
         child: const Text(
-          'Forgot Password?',
+          'Mot de passe oublié ?',
           style: TextStyle(
             color: Colors.white,
             fontWeight: FontWeight.bold,
@@ -232,7 +232,7 @@ class _LoginPageState extends State<LoginPage> {
         ),
 
         child: const Text(
-          'LOGIN',
+          'Se Connecter',
           style: TextStyle(
             color: Color(0xff5ac18e),
             fontSize: 18,
@@ -295,7 +295,7 @@ class _LoginPageState extends State<LoginPage> {
         text: const TextSpan(
           children: [
             TextSpan(
-              text: 'Don\'t have an Account ?',
+              text: 'non inscrit ? ',
               style: TextStyle(
                 color: Colors.white,
                 fontSize: 18,
@@ -303,7 +303,7 @@ class _LoginPageState extends State<LoginPage> {
               ),
             ),
             TextSpan(
-              text: 'Sign Up',
+              text: 'Créer un Compte',
               style: TextStyle(
                 color: Colors.white,
                 fontSize: 18,
@@ -351,7 +351,7 @@ class _LoginPageState extends State<LoginPage> {
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: <Widget>[
                       const Text(
-                        'Sign In',
+                        'Se Connecter',
                         style: TextStyle(
                           color: Colors.white,
                           fontSize: 40,
@@ -372,11 +372,11 @@ class _LoginPageState extends State<LoginPage> {
                         ),
                       ),
                       buildForgotPasswordButton(),
-                      buildrememberCb(),
-                      const SizedBox(height: 10),
+                      //buildrememberCb(),
+                      //const SizedBox(height: 10),
                       buildLoginBtn(),
-                      buildLoginAnonymouslyBtn(),
-                      const SizedBox(height: 10),
+                      //buildLoginAnonymouslyBtn(),
+                      //const SizedBox(height: 10),
                       buildGoToSignUpBtn(),
                     ],
                   ),

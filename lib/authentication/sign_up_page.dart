@@ -46,7 +46,6 @@ class _SignUpPageState extends State<SignUpPage> {
   GeoPoint location = const GeoPoint(0, 0);
   String address = "";
   bool havegotlocation = false;
-
   //Create User Future
   Future<void> createUser() async {
     try {
