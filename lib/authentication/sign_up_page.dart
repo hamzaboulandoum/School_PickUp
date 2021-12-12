@@ -10,7 +10,6 @@ import 'dart:ui';
 // This is actually the Sign Up page i have made a whole page
 // for it and we will animate between the both pages to see
 // how does that work on flutter maan
-
 class SignUpPage extends StatefulWidget {
   // So here we have actually created this funtion
   final Function(bool) loginchanged;

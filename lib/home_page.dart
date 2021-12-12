@@ -1,3 +1,6 @@
+import 'dart:js_util';
+
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:e_shcool_bus/Screens/chat_page.dart';
 import 'package:e_shcool_bus/Screens/map_page.dart';
@@ -24,22 +27,23 @@ class HomePage extends StatefulWidget {
 
 class _HomePageState extends State<HomePage> {
   //Pages Variables
-
   final screens = const [
     Notifications(),
-    //Maps_page(),
-    Map_Achraf_Page(),
+    Maps_page(),
+    //Map_Achraf_Page(),
     Chat_Page(),
   ];
 
   //UI Variables
   int currentIndex = 0;
 
-  // This is how we add the data to the Database
+  // This is how get the data of the user from the database.
   final Stream<QuerySnapshot> users =
       FirebaseFirestore.instance.collection('users').snapshots();
 
-// Future Logout
+  //Getting The Current User Data
+
+  // Future Logout
   Future<void> logout() async {
     await FirebaseAuth.instance.signOut();
     widget.onSignOut(null);
@@ -105,28 +109,56 @@ class _HomePageState extends State<HomePage> {
                       ],
                     ),
                   ),
-                  child: Container(
-                    padding: const EdgeInsets.all(10),
-                    child: Column(
-                      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                      children: [
-                        // finish these drawers layouts
-                        const Text(
-                          "Hamza Boulandoum",
-                          style: TextStyle(
-                            fontWeight: FontWeight.bold,
-                            fontSize: 20,
-                          ),
-                        ),
-                        buildLogOutBtn(),
-                      ],
-                    ),
-                  ),
+                  child: sideBar(),
                 ),
               ],
             ),
           ),
         ),
+      ),
+    );
+  }
+
+  Widget sideBar() {
+    return Container(
+      padding: const EdgeInsets.all(20),
+      child: Column(
+        children: [
+          const SizedBox(height: 60),
+          Row(
+            children: const [
+              Expanded(
+                child: Text(
+                  "Nom:",
+                  style: TextStyle(
+                    fontSize: 25,
+                    color: Colors.white,
+                  ),
+                ),
+              ),
+              Expanded(
+                flex: 2,
+                child: Text(
+                  "Hamza",
+                  style: TextStyle(
+                    fontSize: 25,
+                    color: Colors.white,
+                  ),
+                ),
+              ),
+            ],
+          ),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.start,
+            crossAxisAlignment: CrossAxisAlignment.end,
+            children: [
+              Container(
+                padding: const EdgeInsets.all(10),
+                child: buildLogOutBtn(),
+              ),
+            ],
+          )
+        ],
       ),
     );
   }
@@ -180,6 +212,22 @@ class _HomePageState extends State<HomePage> {
     );
   }
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 /* class MyCustomForm extends StatefulWidget {
   const MyCustomForm({Key? key}) : super(key: key);

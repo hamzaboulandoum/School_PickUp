@@ -43,6 +43,9 @@ dependencies:
   location: ^4.1.1
   #polyline points
   flutter_polyline_points: ^1.0.0
+  #places dependency
+  flutter_google_places: ^0.3.0
+
 
 
 
