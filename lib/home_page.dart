@@ -1,9 +1,15 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:e_shcool_bus/Screens/chat_page.dart';
+import 'package:e_shcool_bus/Screens/map_page.dart';
+import 'package:e_shcool_bus/Screens/notifications.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'dart:ui';
 
 import 'package:flutter/services.dart';
+
+import 'Pages/map/map_screen.dart';
+import 'Screens/achraf_map.dart';
 
 // ignore: use_key_in_widget_constructors
 class HomePage extends StatefulWidget {
@@ -17,6 +23,18 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
+  //Pages Variables
+
+  final screens = const [
+    Notifications(),
+    //Maps_page(),
+    Map_Achraf_Page(),
+    Chat_Page(),
+  ];
+
+  //UI Variables
+  int currentIndex = 0;
+
   // This is how we add the data to the Database
   final Stream<QuerySnapshot> users =
       FirebaseFirestore.instance.collection('users').snapshots();
@@ -64,14 +82,60 @@ class _HomePageState extends State<HomePage> {
     );
   }
 
+  Widget navigationdrawerwidget() {
+    return SafeArea(
+      child: Drawer(
+        child: AnnotatedRegion<SystemUiOverlayStyle>(
+          value: SystemUiOverlayStyle.light,
+          child: GestureDetector(
+            child: Stack(
+              children: <Widget>[
+                Container(
+                  height: double.infinity,
+                  width: double.infinity,
+                  decoration: const BoxDecoration(
+                    gradient: LinearGradient(
+                      begin: Alignment.topCenter,
+                      end: Alignment.bottomCenter,
+                      colors: [
+                        Color(0x665ac18e),
+                        Color(0x995ac18e),
+                        Color(0xcc5ac18e),
+                        Color(0xff5ac18e),
+                      ],
+                    ),
+                  ),
+                  child: Container(
+                    padding: const EdgeInsets.all(10),
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                      children: [
+                        // finish these drawers layouts
+                        const Text(
+                          "Hamza Boulandoum",
+                          style: TextStyle(
+                            fontWeight: FontWeight.bold,
+                            fontSize: 20,
+                          ),
+                        ),
+                        buildLogOutBtn(),
+                      ],
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      drawer: navigationdrawerwidget(),
       appBar: AppBar(
-        leading: const Icon(
-          Icons.menu_rounded,
-          size: 50,
-        ),
         backgroundColor: const Color(0x665ac18e),
         title: const Text(
           'MapsPluginPage',
@@ -82,55 +146,36 @@ class _HomePageState extends State<HomePage> {
           ),
         ),
       ),
-      body: AnnotatedRegion<SystemUiOverlayStyle>(
-        value: SystemUiOverlayStyle.light,
-        child: GestureDetector(
-          child: Stack(
-            children: <Widget>[
-              Container(
-                height: double.infinity,
-                width: double.infinity,
-                decoration: const BoxDecoration(
-                  gradient: LinearGradient(
-                    begin: Alignment.topCenter,
-                    end: Alignment.bottomCenter,
-                    colors: [
-                      Color(0x665ac18e),
-                      Color(0x995ac18e),
-                      Color(0xcc5ac18e),
-                      Color(0xff5ac18e),
-                    ],
-                  ),
-                ),
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.end,
-                  crossAxisAlignment: CrossAxisAlignment.center,
-                  children: [
-                    buildLogOutBtn(),
-                  ],
-                ),
-                /* child: Container(
-                  alignment: Alignment.center,
-                  padding:
-                      const EdgeInsets.symmetric(vertical: 50, horizontal: 10),
-                  color: Colors.black,
-
-                  child: MapSample(),
-                ), */
-
-                //We Add The LogoutButton
-                /* child: Column(
-                  // voila so we have built the column at the end
-                  mainAxisAlignment: MainAxisAlignment.end,
-                  crossAxisAlignment: CrossAxisAlignment.end,
-                  children: [
-                    buildLogOutBtn(),
-                  ],
-                ), */
-              ),
-            ],
-          ),
+      body: IndexedStack(
+        index: currentIndex,
+        children: screens,
+      ),
+      bottomNavigationBar: BottomNavigationBar(
+        fixedColor: Colors.green,
+        iconSize: 25,
+        showUnselectedLabels: false,
+        onTap: (index) => setState(
+          () {
+            //it informs all the tree that the index was updated
+            currentIndex = index;
+          },
         ),
+        currentIndex: currentIndex,
+        items: const [
+          BottomNavigationBarItem(
+            icon: Icon(Icons.notifications),
+            label:
+                'Notifications', // it is necessary to add a label inside this widget
+          ),
+          BottomNavigationBarItem(
+            icon: Icon(Icons.maps_home_work),
+            label: 'Map',
+          ),
+          BottomNavigationBarItem(
+            icon: Icon(Icons.chat),
+            label: 'Chat',
+          ),
+        ],
       ),
     );
   }

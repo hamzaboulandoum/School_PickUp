@@ -295,7 +295,7 @@ class _LoginPageState extends State<LoginPage> {
         text: const TextSpan(
           children: [
             TextSpan(
-              text: 'non inscrit ? ',
+              text: 'non inscrit ? .0',
               style: TextStyle(
                 color: Colors.white,
                 fontSize: 18,

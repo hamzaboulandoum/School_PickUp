@@ -69,7 +69,9 @@ class _SignUpPageState extends State<SignUpPage> {
             'Location': location,
             'adress': address,
           })
+          // ignore: avoid_print
           .then((value) => print("Content Added to database"))
+          // ignore: avoid_print
           .catchError((error) => print('Failed to Add UserData $error'));
     } on FirebaseAuthException catch (e) {
       setState(() {
