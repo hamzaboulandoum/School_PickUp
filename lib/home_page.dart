@@ -1,6 +1,3 @@
-import 'dart:js_util';
-
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:e_shcool_bus/Screens/chat_page.dart';
 import 'package:e_shcool_bus/Screens/map_page.dart';
@@ -10,9 +7,6 @@ import 'package:flutter/material.dart';
 import 'dart:ui';
 
 import 'package:flutter/services.dart';
-
-import 'Pages/map/map_screen.dart';
-import 'Screens/achraf_map.dart';
 
 // ignore: use_key_in_widget_constructors
 class HomePage extends StatefulWidget {
