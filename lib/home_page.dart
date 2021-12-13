@@ -1,7 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:e_shcool_bus/Screens/chat_page.dart';
-import 'package:e_shcool_bus/Screens/map_page.dart';
 import 'package:e_shcool_bus/Screens/notifications.dart';
+import 'package:e_shcool_bus/google_maps/polyline.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'dart:ui';
@@ -21,11 +21,10 @@ class HomePage extends StatefulWidget {
 
 class _HomePageState extends State<HomePage> {
   //Pages Variables
-  final screens = const [
-    Notifications(),
-    Maps_page(),
-    //Map_Achraf_Page(),
-    Chat_Page(),
+  final screens = [
+    const Notifications(),
+    MapScreen(),
+    const Chat_Page(),
   ];
 
   //UI Variables
