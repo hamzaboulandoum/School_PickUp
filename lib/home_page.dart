@@ -1,7 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:e_shcool_bus/Screens/chat_page.dart';
+import 'package:e_shcool_bus/Screens/map_page.dart';
 import 'package:e_shcool_bus/Screens/notifications.dart';
-import 'package:e_shcool_bus/google_maps/polyline.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'dart:ui';
@@ -13,17 +13,23 @@ class HomePage extends StatefulWidget {
   // here we create a snapshot of the collection users
   final Function(User?) onSignOut;
   // ignore: use_key_in_widget_constructors
-  const HomePage({required this.onSignOut});
+  const HomePage({required this.onSignOut, Key? key}) : super(key: key);
 
   @override
+  // ignore: no_logic_in_create_state
   State<HomePage> createState() => _HomePageState();
 }
 
 class _HomePageState extends State<HomePage> {
+  //getting the current firebase user id
+  User? currentUser = FirebaseAuth.instance.currentUser;
+  late String currentUserId = currentUser!.uid;
+
   //Pages Variables
   final screens = [
     const Notifications(),
-    MapScreen(),
+    //MapScreen(),
+    const MapTemporary(),
     const Chat_Page(),
   ];
 
@@ -34,7 +40,7 @@ class _HomePageState extends State<HomePage> {
   final Stream<QuerySnapshot> users =
       FirebaseFirestore.instance.collection('users').snapshots();
 
-  //Getting The Current User Data
+  // Here We Do our tests we must understand clearly the firebase console
 
   // Future Logout
   Future<void> logout() async {
@@ -119,8 +125,8 @@ class _HomePageState extends State<HomePage> {
         children: [
           const SizedBox(height: 60),
           Row(
-            children: const [
-              Expanded(
+            children: [
+              const Expanded(
                 child: Text(
                   "Nom:",
                   style: TextStyle(
@@ -132,8 +138,8 @@ class _HomePageState extends State<HomePage> {
               Expanded(
                 flex: 2,
                 child: Text(
-                  "Hamza",
-                  style: TextStyle(
+                  currentUserId,
+                  style: const TextStyle(
                     fontSize: 25,
                     color: Colors.white,
                   ),

@@ -15,7 +15,7 @@ class DecisionTree extends StatefulWidget {
 
 class _DecisionTreeState extends State<DecisionTree> {
   bool login = true;
-  User? user;
+  User? user; // That is the current user account that we are using.
 
   @override //polymorphism which means changing a fucntion
   void initState() {
@@ -25,7 +25,8 @@ class _DecisionTreeState extends State<DecisionTree> {
 
   onRefresh(userCred) {
     setState(() {
-      user = userCred;
+      user = userCred; // it only sets the state by changing variable everywhere
+      // so that the changes could happen.
     });
   }
 
@@ -40,7 +41,8 @@ class _DecisionTreeState extends State<DecisionTree> {
     if (user == null) {
       if (login == true) {
         return LoginPage(
-          onSignIn: (userCred) => onRefresh(userCred),
+          onSignIn: (userCred) =>
+              onRefresh(userCred), // this is because it is a dynamic function
           loginchanged: (loginresult) => onLogInChanged(loginresult),
           // hope this would work brother
         );
@@ -52,6 +54,7 @@ class _DecisionTreeState extends State<DecisionTree> {
       }
     }
     return HomePage(
+      // here we call the constructor with these necessary parameters
       onSignOut: (userCred) => onRefresh(userCred),
     );
   }
