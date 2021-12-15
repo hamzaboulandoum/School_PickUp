@@ -85,6 +85,10 @@ class _HomePageState extends State<HomePage> {
     );
   }
 
+  //This function checks the presence of a user and can also check for his school
+  //we could connect the user , but before sending him into the home page ,
+  // we add the step of adding him into the database, then we connect
+
   Widget navigationdrawerwidget() {
     return SafeArea(
       child: Drawer(
@@ -211,22 +215,6 @@ class _HomePageState extends State<HomePage> {
     );
   }
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 /* class MyCustomForm extends StatefulWidget {
   const MyCustomForm({Key? key}) : super(key: key);

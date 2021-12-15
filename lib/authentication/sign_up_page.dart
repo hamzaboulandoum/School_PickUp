@@ -30,52 +30,95 @@ class _SignUpPageState extends State<SignUpPage> {
   // here are some variables that we would need later
   final TextEditingController _firstName = TextEditingController();
   final TextEditingController _lastName = TextEditingController();
+  final TextEditingController _phoneNumber = TextEditingController();
+  final TextEditingController _schoolName = TextEditingController();
   final TextEditingController _controllerEmail = TextEditingController();
   final TextEditingController _controllerPassword = TextEditingController();
+  final TextEditingController _schoolPassword = TextEditingController();
   final TextEditingController _controllerConfirmPassword =
       TextEditingController();
 
   // here we do add logical Variables
+  bool visibility = true;
+  bool visibilitySchoolData = false;
   String error = "";
   String firstName = "";
   String lastName = "";
   String emailAdress = "";
   String password = "";
   String confirmPassword = "";
+  String schoolName = "";
+  String schoolPassword = "";
+  String phoneNumber = "";
   GeoPoint location = const GeoPoint(0, 0);
   String address = "";
   bool havegotlocation = false;
+
   //Create User Future
   Future<void> createUser() async {
     try {
-      CollectionReference userData =
-          FirebaseFirestore.instance.collection('userData');
+      //we add the user to the authentification
       UserCredential userCredential = await FirebaseAuth.instance
           .createUserWithEmailAndPassword(
               email: _controllerEmail.text, password: _controllerPassword.text);
+
       // ignore: avoid_print
       print(userCredential.user);
+
       // now we can sign up directly broski
-      widget.onSignUp(userCredential.user);
-      widget.loginchanged(true);
+      setState(() {
+        visibility = false;
+        visibilitySchoolData = true;
+        error = "";
+      });
+    } on FirebaseAuthException catch (e) {
+      setState(() {
+        error = e.message!; // voila this is because of the null safety
+      });
+    }
+  }
+
+  //Adding User To Database
+  Future<void> addUserToDB() async {
+    //Searching For School with current Password on DB
+    var result = await FirebaseFirestore.instance
+        .collection("Schools")
+        .where("SchoolPassword", isEqualTo: schoolPassword)
+        .get();
+    if (result.docs.isEmpty) {
+      setState(() {
+        error = "Mot De passe ou Non d'école Incorrect";
+      });
+    } else {
+      //Getting The Firebase User
+      User? currentUser = FirebaseAuth.instance.currentUser;
+      late String currentUserId = currentUser!.uid;
       //here we add our user data to the database
-      userData
-          .add({
+      CollectionReference school =
+          FirebaseFirestore.instance.collection('Schools');
+      school
+          .doc(result.docs.first.id)
+          .collection("Parents")
+          .doc(currentUserId)
+          .set({
+            'SchoolName': schoolName,
+            'SchoolPassword': schoolPassword,
+            'adress': address,
+            'email': emailAdress,
             'firstName': firstName,
             'lastName': lastName,
-            'email': emailAdress,
+            'location': location,
             'password': password,
-            'Location': location,
-            'adress': address,
+            'phoneNumber': phoneNumber
           })
           // ignore: avoid_print
           .then((value) => print("Content Added to database"))
           // ignore: avoid_print
           .catchError((error) => print('Failed to Add UserData $error'));
-    } on FirebaseAuthException catch (e) {
-      setState(() {
-        error = e.message!; // voila this is because of the null safety
-      });
+
+      //We Go To The Next Page
+      widget.onSignUp(currentUser);
+      widget.loginchanged(true);
     }
   }
 
@@ -102,7 +145,120 @@ class _SignUpPageState extends State<SignUpPage> {
         "$name, $subLocality, $locality, $administrativeArea $postalCode, $country";
   }
 
-  // Let us define some Widget That we would Use
+  // Essentiel Widgets That Were Used
+  Widget buildSchoolName() {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: <Widget>[
+        const Text(
+          "Nom de l'école", //firstname
+          style: TextStyle(
+            color: Colors.white,
+            fontSize: 16,
+            fontWeight: FontWeight.bold,
+          ),
+        ),
+        const SizedBox(
+          height: 10,
+        ),
+        Container(
+          // really important widget to learn
+          alignment: Alignment.centerLeft,
+          decoration: BoxDecoration(
+            color: Colors.white,
+            borderRadius: BorderRadius.circular(10), // rounded edges
+            boxShadow: const [
+              BoxShadow(
+                color: Colors.black26,
+                blurRadius: 6,
+                offset: Offset(0, 2),
+              ),
+            ],
+          ),
+
+          height: 60,
+          child: TextFormField(
+            onChanged: (value) {
+              schoolName = value; // cast in dart
+            },
+            controller: _schoolName,
+            keyboardType: TextInputType.name,
+            style: const TextStyle(color: Colors.black87),
+            decoration: const InputDecoration(
+              border: InputBorder.none,
+              contentPadding: EdgeInsets.only(top: 14),
+              prefixIcon: Icon(
+                Icons.school,
+                color: Color(0xff5ac18e),
+              ),
+              hintText: "Nom de l'école",
+              hintStyle: TextStyle(
+                color: Colors.black38,
+              ),
+            ),
+          ),
+        )
+      ],
+    );
+  }
+
+  Widget buildSchoolPassword() {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: <Widget>[
+        const Text(
+          "Mot de passe de l'école",
+          style: TextStyle(
+            color: Colors.white,
+            fontSize: 16,
+            fontWeight: FontWeight.bold,
+          ),
+        ),
+        const SizedBox(
+          height: 10,
+        ),
+        Container(
+          // really important widget to learn
+          alignment: Alignment.centerLeft,
+          decoration: BoxDecoration(
+            color: Colors.white,
+            borderRadius: BorderRadius.circular(10), // rounded edges
+            boxShadow: const [
+              BoxShadow(
+                color: Colors.black26,
+                blurRadius: 6,
+                offset: Offset(0, 2),
+              ),
+            ],
+          ),
+
+          height: 60,
+          child: TextFormField(
+            onChanged: (value) {
+              schoolPassword = value; // cast in dart
+            },
+            controller: _schoolPassword,
+            obscureText: true,
+            style: const TextStyle(
+              color: Colors.black87,
+            ),
+            decoration: const InputDecoration(
+                border: InputBorder.none,
+                contentPadding: EdgeInsets.only(top: 14),
+                prefixIcon: Icon(
+                  Icons.password,
+                  color: Color(0xff5ac18e),
+                ),
+                hintText: "Mot de passe de l'école",
+                hintStyle: TextStyle(
+                  color: Colors.black38,
+                )),
+          ),
+        )
+      ],
+    );
+  }
+
   Widget buildFirstName() {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -271,6 +427,60 @@ class _SignUpPageState extends State<SignUpPage> {
     );
   }
 
+  Widget buildphoneNumber() {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: <Widget>[
+        const Text(
+          'Phone Number', //firstname
+          style: TextStyle(
+            color: Colors.white,
+            fontSize: 16,
+            fontWeight: FontWeight.bold,
+          ),
+        ),
+        const SizedBox(
+          height: 10,
+        ),
+        Container(
+          alignment: Alignment.centerLeft,
+          decoration: BoxDecoration(
+            color: Colors.white,
+            borderRadius: BorderRadius.circular(10), // rounded edges
+            boxShadow: const [
+              BoxShadow(
+                color: Colors.black26,
+                blurRadius: 6,
+                offset: Offset(0, 2),
+              ),
+            ],
+          ),
+          height: 60,
+          child: TextFormField(
+            onChanged: (value) {
+              phoneNumber = value; // cast in dart
+            },
+            controller: _phoneNumber,
+            keyboardType: TextInputType.phone,
+            style: const TextStyle(color: Colors.black87),
+            decoration: const InputDecoration(
+              border: InputBorder.none,
+              contentPadding: EdgeInsets.only(top: 14),
+              prefixIcon: Icon(
+                Icons.phone,
+                color: Color(0xff5ac18e),
+              ),
+              hintText: 'Phone Number',
+              hintStyle: TextStyle(
+                color: Colors.black38,
+              ),
+            ),
+          ),
+        )
+      ],
+    );
+  }
+
   Widget buildPassword() {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -422,17 +632,17 @@ class _SignUpPageState extends State<SignUpPage> {
       child: ElevatedButton(
         onPressed: () {
           //D'abord il fallait verifier les conditions
-          if (firstName == "") {
-            setState(() {
-              error = "vous n'avez pas saisie votre Prenom!";
-            });
-          } else if (lastName == "") {
+          if (lastName == "") {
             setState(() {
               error = "vous n'avez pas saisie votre Nom!";
             });
           } else if (emailAdress == "") {
             setState(() {
               error = "vous n'avez pas saisie votre Email!";
+            });
+          } else if (phoneNumber == "") {
+            setState(() {
+              error = "vous n'avez pas saisie votre Numero De Telephone!";
             });
           } else if (password == "") {
             setState(() {
@@ -481,6 +691,56 @@ class _SignUpPageState extends State<SignUpPage> {
     );
   }
 
+  Widget buildConnectToSchool() {
+    return Container(
+      padding: const EdgeInsets.symmetric(vertical: 25),
+      width: double.infinity,
+      child: ElevatedButton(
+        onPressed: () {
+          //D'abord il fallait verifier les conditions
+          if (schoolName == "") {
+            setState(() {
+              error = "vous n'avez pas saisie le nom de l'école!";
+            });
+          } else if (schoolPassword == "") {
+            setState(() {
+              error = "vous n'avez pas saisie le mot  de passe de l'école!";
+            });
+          }
+          // we add the user now to our database
+          else {
+            addUserToDB();
+          }
+        },
+        style: ButtonStyle(
+          shape: MaterialStateProperty.all<RoundedRectangleBorder>(
+              RoundedRectangleBorder(borderRadius: BorderRadius.circular(15))),
+          padding:
+              MaterialStateProperty.all<EdgeInsets>(const EdgeInsets.all(15)),
+          elevation: MaterialStateProperty.all<double>(10),
+          backgroundColor: MaterialStateProperty.all<Color>(Colors.white),
+          overlayColor: MaterialStateProperty.resolveWith(
+            (states) {
+              return states.contains(MaterialState.pressed)
+                  ? Colors.black12
+                  : null;
+            },
+          ),
+        ),
+
+        child: const Text(
+          'Se Connecter',
+          style: TextStyle(
+            color: Color(0xff5ac18e),
+            fontSize: 18,
+            fontWeight: FontWeight.bold,
+          ),
+        ),
+        // ignore: prefer_const_constructors
+      ),
+    );
+  }
+
   // Override and build
   @override
   Widget build(BuildContext context) {
@@ -516,26 +776,108 @@ class _SignUpPageState extends State<SignUpPage> {
                     child: Column(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: <Widget>[
-                        const Text(
-                          'Créer un Compte',
-                          style: TextStyle(
-                            color: Colors.white,
-                            fontSize: 40,
-                            fontWeight: FontWeight.bold,
+                        Visibility(
+                          visible: visibilitySchoolData,
+                          child: const Text(
+                            "Saisir l'école",
+                            style: TextStyle(
+                              color: Colors.white,
+                              fontSize: 40,
+                              fontWeight: FontWeight.bold,
+                            ),
                           ),
                         ),
-                        const SizedBox(height: 10),
-                        buildFirstName(),
-                        const SizedBox(height: 10),
-                        buildLastName(),
-                        const SizedBox(height: 10),
-                        buildEmail(),
-                        const SizedBox(height: 10),
-                        buildPassword(),
-                        const SizedBox(height: 10),
-                        buildConfirmPassword(),
-                        getLocationButton(),
-                        buildSignUpBtn(),
+                        Visibility(
+                          child: const SizedBox(height: 10),
+                          visible: visibilitySchoolData,
+                        ),
+                        Visibility(
+                          child: buildSchoolName(),
+                          visible: visibilitySchoolData,
+                        ),
+                        Visibility(
+                          child: const SizedBox(height: 10),
+                          visible: visibilitySchoolData,
+                        ),
+                        Visibility(
+                          child: buildSchoolPassword(),
+                          visible: visibilitySchoolData,
+                        ),
+                        Visibility(
+                          child: const SizedBox(height: 10),
+                          visible: visibilitySchoolData,
+                        ),
+                        Visibility(
+                          child: buildConnectToSchool(),
+                          visible: visibilitySchoolData,
+                        ),
+                        Visibility(
+                          visible: visibility,
+                          child: const Text(
+                            'Créer un Compte',
+                            style: TextStyle(
+                              color: Colors.white,
+                              fontSize: 40,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                        ),
+                        Visibility(
+                          child: const SizedBox(height: 10),
+                          visible: visibility,
+                        ),
+                        Visibility(
+                          child: buildFirstName(),
+                          visible: visibility,
+                        ),
+                        Visibility(
+                          child: const SizedBox(height: 10),
+                          visible: visibility,
+                        ),
+                        Visibility(
+                          child: buildLastName(),
+                          visible: visibility,
+                        ),
+                        Visibility(
+                          child: const SizedBox(height: 10),
+                          visible: visibility,
+                        ),
+                        Visibility(
+                          child: buildEmail(),
+                          visible: visibility,
+                        ),
+                        Visibility(
+                          child: const SizedBox(height: 10),
+                          visible: visibility,
+                        ),
+                        Visibility(
+                          child: buildphoneNumber(),
+                          visible: visibility,
+                        ),
+                        Visibility(
+                          child: const SizedBox(height: 10),
+                          visible: visibility,
+                        ),
+                        Visibility(
+                          child: buildPassword(),
+                          visible: visibility,
+                        ),
+                        Visibility(
+                          child: const SizedBox(height: 10),
+                          visible: visibility,
+                        ),
+                        Visibility(
+                          child: buildConfirmPassword(),
+                          visible: visibility,
+                        ),
+                        Visibility(
+                          child: getLocationButton(),
+                          visible: visibility,
+                        ),
+                        Visibility(
+                          child: buildSignUpBtn(),
+                          visible: visibility,
+                        ),
                         Text(
                           error,
                           style: const TextStyle(

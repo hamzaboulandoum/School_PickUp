@@ -295,7 +295,7 @@ class _LoginPageState extends State<LoginPage> {
         text: const TextSpan(
           children: [
             TextSpan(
-              text: 'non inscrit ? .0',
+              text: 'non inscrit ? ',
               style: TextStyle(
                 color: Colors.white,
                 fontSize: 18,
@@ -372,11 +372,7 @@ class _LoginPageState extends State<LoginPage> {
                         ),
                       ),
                       buildForgotPasswordButton(),
-                      //buildrememberCb(),
-                      //const SizedBox(height: 10),
                       buildLoginBtn(),
-                      //buildLoginAnonymouslyBtn(),
-                      //const SizedBox(height: 10),
                       buildGoToSignUpBtn(),
                     ],
                   ),
