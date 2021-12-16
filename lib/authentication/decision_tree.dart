@@ -15,7 +15,8 @@ class DecisionTree extends StatefulWidget {
 
 class _DecisionTreeState extends State<DecisionTree> {
   bool login = true;
-  User? user; // That is the current user account that we are using.
+  User? user;
+  String schoolId = "";
 
   @override //polymorphism which means changing a fucntion
   void initState() {
@@ -26,6 +27,14 @@ class _DecisionTreeState extends State<DecisionTree> {
   onRefresh(userCred) {
     setState(() {
       user = userCred; // it only sets the state by changing variable everywhere
+      // so that the changes could happen.
+    });
+  }
+
+  onIdChanged(schoolSignUpId) {
+    setState(() {
+      schoolId =
+          schoolSignUpId; // it only sets the state by changing variable everywhere
       // so that the changes could happen.
     });
   }
@@ -41,21 +50,19 @@ class _DecisionTreeState extends State<DecisionTree> {
     if (user == null) {
       if (login == true) {
         return LoginPage(
-          onSignIn: (userCred) =>
-              onRefresh(userCred), // this is because it is a dynamic function
+          onSignIn: (userCred) => onRefresh(userCred),
           loginchanged: (loginresult) => onLogInChanged(loginresult),
-          // hope this would work brother
         );
       } else {
         return SignUpPage(
-          onSignUp: (userCred) => onRefresh(userCred),
-          loginchanged: (loginresult) => onLogInChanged(loginresult),
-        );
+            onSignUp: (userCred) => onRefresh(userCred),
+            loginchanged: (loginresult) => onLogInChanged(loginresult),
+            schoolId: (schoolSignUpId) => onIdChanged(schoolSignUpId));
       }
     }
     return HomePage(
-      // here we call the constructor with these necessary parameters
       onSignOut: (userCred) => onRefresh(userCred),
+      schoolID: schoolId,
     );
   }
 }

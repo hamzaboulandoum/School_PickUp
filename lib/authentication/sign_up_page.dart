@@ -7,15 +7,22 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/services.dart';
 import 'dart:ui';
 
+import 'id_school_user.dart';
+
 // This is actually the Sign Up page i have made a whole page
 // for it and we will animate between the both pages to see
 // how does that work on flutter maan
 class SignUpPage extends StatefulWidget {
-  // So here we have actually created this funtion
+  // Dynamic Functions Used
   final Function(bool) loginchanged;
+  final Function(String) schoolId;
   final Function(User?) onSignUp;
+  //Constructor
   const SignUpPage(
-      {required this.loginchanged, required this.onSignUp, Key? key})
+      {required this.loginchanged,
+      required this.onSignUp,
+      required this.schoolId,
+      Key? key})
       : super(key: key);
 
   @override
@@ -64,7 +71,6 @@ class _SignUpPageState extends State<SignUpPage> {
 
       // ignore: avoid_print
       print(userCredential.user);
-
       // now we can sign up directly broski
       setState(() {
         visibility = false;
@@ -87,7 +93,7 @@ class _SignUpPageState extends State<SignUpPage> {
         .get();
     if (result.docs.isEmpty) {
       setState(() {
-        error = "Mot De passe ou Non d'école Incorrect";
+        error = "Mot de passe ou non d'école incorrect";
       });
     } else {
       //Getting The Firebase User
@@ -117,6 +123,7 @@ class _SignUpPageState extends State<SignUpPage> {
           .catchError((error) => print('Failed to Add UserData $error'));
 
       //We Go To The Next Page
+      widget.schoolId(result.docs.first.id);
       widget.onSignUp(currentUser);
       widget.loginchanged(true);
     }
