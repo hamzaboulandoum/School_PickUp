@@ -1,6 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:e_shcool_bus/Screens/chat_page.dart';
 import 'package:e_shcool_bus/Screens/notifications.dart';
+import 'package:e_shcool_bus/optimization/map_page.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'dart:ui';
@@ -35,26 +36,19 @@ class _HomePageState extends State<HomePage> {
   bool breakOfLoop = false;
   bool visibility = false;
   bool once = true;
-  //getting the current firebase user id
+
+  //Peut etre supprimer ceci par la suite.
   User? currentUser = FirebaseAuth.instance.currentUser;
   late String currentUserId = currentUser!.uid;
+
+  //
   String schoolIdFinal = " ";
   String schoolId = " ";
 
   //Pages Variables
-  final screens = [
-    const Notifications(),
-    MapScreen(),
-    //const MapTemporary(),
-    const Chat_Page(),
-  ];
 
   //UI Variables
   int currentIndex = 0;
-
-  // This is how get the data of the user from the database.
-  final Stream<QuerySnapshot> users =
-      FirebaseFirestore.instance.collection('users').snapshots();
 
   // Future Logout
   Future<void> logout() async {
@@ -146,6 +140,7 @@ class _HomePageState extends State<HomePage> {
       ),
     );
   }
+
 // Finished Fetching Data
 
   //widgets that we will be using
@@ -185,47 +180,6 @@ class _HomePageState extends State<HomePage> {
       ),
     );
   }
-
-  /*Widget buildTestBtn() {
-    return Container(
-      padding: const EdgeInsets.symmetric(vertical: 25),
-      width: 100,
-      child: ElevatedButton(
-        onPressed: () {
-          print(schoolIdFinal);
-          /*setState(() {
-            visibility = true;
-          });*/
-          //print(schoolId);
-        },
-        style: ButtonStyle(
-          shape: MaterialStateProperty.all<RoundedRectangleBorder>(
-              RoundedRectangleBorder(borderRadius: BorderRadius.circular(15))),
-          padding:
-              MaterialStateProperty.all<EdgeInsets>(const EdgeInsets.all(15)),
-          elevation: MaterialStateProperty.all<double>(10),
-          backgroundColor: MaterialStateProperty.all<Color>(Colors.white),
-          overlayColor: MaterialStateProperty.resolveWith(
-            (states) {
-              return states.contains(MaterialState.pressed)
-                  ? Colors.black12
-                  : null;
-            },
-          ),
-        ),
-
-        child: const Text(
-          'GetId',
-          style: TextStyle(
-            color: Color(0xff5ac18e),
-            fontSize: 18,
-            fontWeight: FontWeight.bold,
-          ),
-        ),
-        // ignore: prefer_const_constructors
-      ),
-    );
-  }*/
 
   //the side Bar Structure
   Widget sideBar() {
@@ -284,6 +238,7 @@ class _HomePageState extends State<HomePage> {
             onTap: () {
               if (once) {
                 setState(() {
+                  // voila it is here where we set that
                   visibility = true;
                   once = false;
                 });
@@ -334,7 +289,11 @@ class _HomePageState extends State<HomePage> {
       ),
       body: IndexedStack(
         index: currentIndex,
-        children: screens,
+        children: [
+          const Notifications(),
+          MapPage(nombreBus: 3),
+          const Chat_Page(),
+        ],
       ),
       bottomNavigationBar: BottomNavigationBar(
         fixedColor: Colors.green,
@@ -354,7 +313,7 @@ class _HomePageState extends State<HomePage> {
                 'Notifications', // it is necessary to add a label inside this widget
           ),
           BottomNavigationBarItem(
-            icon: Icon(Icons.maps_home_work),
+            icon: Icon(Icons.directions_car),
             label: 'Map',
           ),
           BottomNavigationBarItem(

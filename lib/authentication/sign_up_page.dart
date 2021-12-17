@@ -783,16 +783,38 @@ class _SignUpPageState extends State<SignUpPage> {
                     child: Column(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: <Widget>[
-                        Visibility(
-                          visible: visibilitySchoolData,
-                          child: const Text(
-                            "Saisir l'école",
-                            style: TextStyle(
-                              color: Colors.white,
-                              fontSize: 40,
-                              fontWeight: FontWeight.bold,
+                        Row(
+                          children: [
+                            Visibility(
+                              visible: visibilitySchoolData,
+                              child: ElevatedButton(
+                                onPressed: () {
+                                  widget.loginchanged(true);
+                                },
+                                child: const Icon(
+                                  Icons.arrow_back,
+                                  color: Color(0xff5ac18e),
+                                ),
+                                style: ElevatedButton.styleFrom(
+                                  shape: const CircleBorder(),
+                                  padding: const EdgeInsets.all(10),
+                                  primary: Colors.white, // <-- Button color
+                                  onPrimary: Colors.green, // <-- Splash color
+                                ),
+                              ),
                             ),
-                          ),
+                            Visibility(
+                              visible: visibilitySchoolData,
+                              child: const Text(
+                                "Saisir l'école",
+                                style: TextStyle(
+                                  color: Colors.white,
+                                  fontSize: 35,
+                                  fontWeight: FontWeight.bold,
+                                ),
+                              ),
+                            ),
+                          ],
                         ),
                         Visibility(
                           child: const SizedBox(height: 10),
@@ -818,16 +840,38 @@ class _SignUpPageState extends State<SignUpPage> {
                           child: buildConnectToSchool(),
                           visible: visibilitySchoolData,
                         ),
-                        Visibility(
-                          visible: visibility,
-                          child: const Text(
-                            'Créer un Compte',
-                            style: TextStyle(
-                              color: Colors.white,
-                              fontSize: 40,
-                              fontWeight: FontWeight.bold,
+                        Row(
+                          children: [
+                            Visibility(
+                              visible: visibility,
+                              child: ElevatedButton(
+                                onPressed: () {
+                                  widget.loginchanged(true);
+                                },
+                                child: const Icon(
+                                  Icons.arrow_back,
+                                  color: Color(0xff5ac18e),
+                                ),
+                                style: ElevatedButton.styleFrom(
+                                  shape: const CircleBorder(),
+                                  padding: const EdgeInsets.all(10),
+                                  primary: Colors.white, // <-- Button color
+                                  onPrimary: Colors.green, // <-- Splash color
+                                ),
+                              ),
                             ),
-                          ),
+                            Visibility(
+                              visible: visibility,
+                              child: const Text(
+                                'Créer un Compte',
+                                style: TextStyle(
+                                  color: Colors.white,
+                                  fontSize: 35,
+                                  fontWeight: FontWeight.bold,
+                                ),
+                              ),
+                            ),
+                          ],
                         ),
                         Visibility(
                           child: const SizedBox(height: 10),
